@@ -2,24 +2,27 @@ const fetch = require('node-fetch');
 
 const getWeightOnPlanet = (mass, gravity) => {
     return mass * gravity;
-}
+};
 
-const genericRequest = async (url, method, body, logging = false) => {
+const genericRequest = async (url, method, body = null, logging = false) => {
     let options = {
         method: method
+    };
+    if (url.indexOf('https://') < 0) {
+        url = 'https://swapi.dev/api' + url;
     }
-    if(body){
+    if (body) {
         options.body = body;
     }
     const response = await fetch(url, options);
     const data = await response.json();
-    if(logging){
+    if (logging) {
         console.log(data);
     }
-    return data;
-}
+    return { status: response.status, data };
+};
 
 module.exports = {
     getWeightOnPlanet,
     genericRequest
-}
+};

@@ -1,14 +1,24 @@
-
+const SwService = require("../services/swService");
 
 const applySwapiEndpoints = (server, app) => {
+    const swService = new SwService(app);
 
     server.get('/hfswapi/test', async (req, res) => {
-        const data = await app.swapiFunctions.genericRequest('https://swapi.dev/api/', 'GET', null, true);
+        const { data } = await app.swapiFunctions.genericRequest('https://swapi.dev/api/', 'GET', null, true);
         res.send(data);
     });
 
     server.get('/hfswapi/getPeople/:id', async (req, res) => {
-        res.sendStatus(501);
+        try {
+            const people = await swService.getPeople(req.params.id);
+
+            if (!people) res.status(404).send(`People with ID ${req.params.id} not found.`);
+
+            console.log(people)
+            res.status(200).send(people);
+        } catch (e) {
+            res.status(500).send('Internal server error');
+        }
     });
 
     server.get('/hfswapi/getPlanet/:id', async (req, res) => {
@@ -19,11 +29,11 @@ const applySwapiEndpoints = (server, app) => {
         res.sendStatus(501);
     });
 
-    server.get('/hfswapi/getLogs',async (req, res) => {
+    server.get('/hfswapi/getLogs', async (req, res) => {
         const data = await app.db.logging.findAll();
         res.send(data);
     });
 
-}
+};
 
 module.exports = applySwapiEndpoints;
