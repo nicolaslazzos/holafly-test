@@ -1,14 +1,15 @@
 const express = require('express');
 const applyEndpoints = require('./endpoints');
-const applyMiddlewares = require('./middlewares');
 const applyServices = require('./services');
+const { applyMiddlewares, applyErrorMiddlwares } = require('./middlewares');
 
 const createExpressServer = async app => {
 	const server = express();
 
+	applyMiddlewares(server, app);
 	applyEndpoints(server, app);
-	applyMiddlewares(server, app); // apply last, because of the error handler
-	applyServices(app);
+	applyServices(server, app);
+	applyErrorMiddlwares(server, app);
 
 	await app.db.initDB();
 	await app.db.populateDB();

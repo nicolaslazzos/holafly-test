@@ -1,9 +1,12 @@
 const loggingMiddleware = require('./loggingMiddleware');
 const exceptionsMiddleware = require('./exceptionsMiddleware');
 
-const applyMiddlwares = (server, app) => {
+const applyMiddlewares = (server, app) => {
     server.use(loggingMiddleware(app));
+};
+
+const applyErrorMiddlwares = (server, app) => {
     server.use(exceptionsMiddleware);
 };
 
-module.exports = applyMiddlwares;
+module.exports = { applyMiddlewares, applyErrorMiddlwares };
