@@ -1,9 +1,12 @@
-const { getRandomId } = require('../utils/functions');
-
 const applySwapiEndpoints = (server, app) => {
     server.get('/hfswapi/test', async (req, res) => {
-        const { data } = await app.swapiFunctions.genericRequest('https://swapi.dev/api/', 'GET', null, true);
-        res.send(data);
+        try {
+            const { data } = await app.services.swService('/', 'GET',
+                null, true);
+            res.status(200).send(data);
+        } catch (e) {
+            res.status(500).send('Internal server error');
+        }
     });
 
     server.get('/hfswapi/getPeople/:id', async (req, res) => {
@@ -32,8 +35,8 @@ const applySwapiEndpoints = (server, app) => {
 
     server.get('/hfswapi/getWeightOnPlanetRandom', async (req, res) => {
         try {
-            const peopleId = req.query.peopleId ?? getRandomId();
-            const planetId = req.query.planetId ?? getRandomId();
+            const peopleId = req.query.peopleId ?? app.utils.getRandomId();
+            const planetId = req.query.planetId ?? app.utils.getRandomId();
 
             const weight = await app.services.swService.getWeightOnPlanet(peopleId, planetId);
 

@@ -1,9 +1,7 @@
 const SwPeopleRepository = require("../../app/db/repositories/swPeopleRepository");
 const SwPlanetRepository = require("../../app/db/repositories/swPlanetRepository");
-const SwPeopleEntity = require("../entities/swPeople");
-const SwPlanetEntity = require("../entities/swPlanet");
-
-const { getIdFromString } = require('../utils/functions');
+const SwPeopleEntity = require("../../app/db/entities/swPeople");
+const SwPlanetEntity = require("../../app/db/entities/swPlanet");
 
 class SwService {
   constructor(app) {
@@ -11,6 +9,17 @@ class SwService {
     this.swPeopleRepository = new SwPeopleRepository(this.app.db);
     this.swPlanetRepository = new SwPlanetRepository(this.app.db);
   }
+
+  async callApi(url, method = 'GET', body = null) {
+    const options = { method: method };
+
+    if (body) options.body = body;
+
+    const response = await fetch(`https://swapi.dev/api${url}`, options);
+    const data = await response.json();
+
+    return { status: response.status, data };
+  };
 
   async createPeople(dto) {
     const { id, name, mass, height, homeworld_name, homeworld_id } = dto;
@@ -24,11 +33,11 @@ class SwService {
     let people = await this.swPeopleRepository.findById(id);
 
     if (!people) {
-      const { status, data } = await this.app.swapiFunctions.genericRequest(`/people/${id}`);
+      const { status, data } = await this.callApi(`/people/${id}`);
 
       if (status !== 200) return null;
 
-      const planetId = getIdFromString(data.homeworld);
+      const planetId = this.app.utils.getIdFromString(data.homeworld);
 
       const planet = await this.getPlanet(planetId);
 
@@ -50,7 +59,7 @@ class SwService {
     let planet = await this.swPlanetRepository.findById(id);
 
     if (!planet) {
-      const { status, data } = await this.app.swapiFunctions.genericRequest(`/planets/${id}`);
+      const { status, data } = await this.callApi(`/planets/${id}`);
 
       if (status !== 200) return null;
 
@@ -64,9 +73,9 @@ class SwService {
     const people = await this.getPeople(peopleId);
     const planet = await this.getPlanet(planetId);
 
-    if (getIdFromString(people.homeworld_id) == planetId) throw new Error();
+    if (this.app.utils.getIdFromString(people.homeworld_id) == planetId) throw new Error();
 
-    return this.app.swapiFunctions.getWeightOnPlanet(people.mass, planet.gravity);
+    return people.mass * planet.gravity;
   }
 }
 
