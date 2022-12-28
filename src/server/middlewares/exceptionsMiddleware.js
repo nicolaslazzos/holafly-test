@@ -1,9 +1,9 @@
-const { Exception } = require('../errors');
+const { Exception, InternalServerError } = require('../errors');
 
 function exceptionsHandler(err, req, res, next) {
-  if (err instanceof Exception) return res.status(err.status).send({ error: err.message });
+  err = err instanceof Exception ? err : new InternalServerError();
 
-  res.status(500).send({ error: 'Internal server error' });
+  res.status(err.status).send({ error: err.message });
 };
 
 module.exports = exceptionsHandler;
