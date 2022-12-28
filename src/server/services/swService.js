@@ -56,7 +56,7 @@ class SwService {
 
     const { status, data } = await this.callApi(`/planets/${id}`);
 
-    if (status !== 200) throw new NotFoundException(`People with ID ${id} not found`);
+    if (status !== 200) throw new NotFoundException(`Planet with ID ${id} not found`);
 
     return this.createPlanet({ id, ...data, gravity: this.app.utils.getFloatFromString(data.gravity) });
   }
