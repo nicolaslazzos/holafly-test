@@ -44,8 +44,15 @@ const applySwapiEndpoints = (server, app) => {
     });
 
     server.get('/hfswapi/getLogs', async (req, res) => {
-        const data = await app.db.logging.findAll();
-        res.send(data);
+        try {
+            const { page, quantity } = { page: 0, quantity: 20, ...req.query };
+
+            const logs = await app.services.loggingService.findAll({ page, quantity });
+
+            res.status(200).send({ docs: logs, page: +page, quantity: +quantity });
+        } catch (e) {
+            res.status(500).send('Internal server error');
+        }
     });
 
 };

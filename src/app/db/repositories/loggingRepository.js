@@ -4,8 +4,11 @@ class LoggingRepository {
   }
 
   async create(dto) {
-    const log = await this.db.logging.create(dto);
-    return log ? log.toJSON() : null;
+    return this.db.logging.create(dto, { raw: true });
+  }
+
+  async findAll({ offset, limit }) {
+    return this.db.logging.findAll({ order: [['createdAt', 'DESC']], offset, limit, raw: true });
   }
 }
 
