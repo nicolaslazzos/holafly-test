@@ -1,9 +1,6 @@
-const SwService = require("../services/swService");
 const { getRandomId } = require('../utils/functions');
 
 const applySwapiEndpoints = (server, app) => {
-    const swService = new SwService(app);
-
     server.get('/hfswapi/test', async (req, res) => {
         const { data } = await app.swapiFunctions.genericRequest('https://swapi.dev/api/', 'GET', null, true);
         res.send(data);
@@ -11,7 +8,7 @@ const applySwapiEndpoints = (server, app) => {
 
     server.get('/hfswapi/getPeople/:id', async (req, res) => {
         try {
-            const people = await swService.getPeople(req.params.id);
+            const people = await app.services.swService.getPeople(req.params.id);
 
             if (!people) res.status(404).send(`People with ID ${req.params.id} not found.`);
 
@@ -23,7 +20,7 @@ const applySwapiEndpoints = (server, app) => {
 
     server.get('/hfswapi/getPlanet/:id', async (req, res) => {
         try {
-            const planet = await swService.getPlanet(req.params.id);
+            const planet = await app.services.swService.getPlanet(req.params.id);
 
             if (!planet) res.status(404).send(`Planet with ID ${req.params.id} not found.`);
 
@@ -38,7 +35,7 @@ const applySwapiEndpoints = (server, app) => {
             const peopleId = req.query.peopleId ?? getRandomId();
             const planetId = req.query.planetId ?? getRandomId();
 
-            const weight = await swService.getWeightOnPlanet(peopleId, planetId);
+            const weight = await app.services.swService.getWeightOnPlanet(peopleId, planetId);
 
             res.status(200).send({ weight });
         } catch (e) {
