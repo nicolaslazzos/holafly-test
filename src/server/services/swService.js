@@ -20,11 +20,15 @@ class SwService {
     let people = await this.swPeopleRepository.findById(id);
 
     if (!people) {
-      const { status, data } = await this.app.swapiFunctions.genericRequest(`/people/${id}`, 'GET');
+      const { status, data } = await this.app.swapiFunctions.genericRequest(`/people/${id}`);
 
       if (status !== 200) return null;
 
-      people = await this.createPeople({ id, ...data });
+      const planetId = data.homeworld.match(/\d+/)[0];
+
+      const planet = await this.getPlanet(planetId);
+
+      people = await this.createPeople({ id, ...data, homeworld_id: `/planets/${planetId}`, homeworld_name: planet.name });
     }
 
     return new SwPeopleEntity(people);
@@ -40,7 +44,7 @@ class SwService {
     let planet = await this.swPlanetRepository.findById(id);
 
     if (!planet) {
-      const { status, data } = await this.app.swapiFunctions.genericRequest(`/planets/${id}`, 'GET');
+      const { status, data } = await this.app.swapiFunctions.genericRequest(`/planets/${id}`);
 
       if (status !== 200) return null;
 
