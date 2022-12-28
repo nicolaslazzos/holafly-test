@@ -14,7 +14,6 @@ const applySwapiEndpoints = (server, app) => {
 
             if (!people) res.status(404).send(`People with ID ${req.params.id} not found.`);
 
-            console.log(people)
             res.status(200).send(people);
         } catch (e) {
             res.status(500).send('Internal server error');
@@ -22,7 +21,15 @@ const applySwapiEndpoints = (server, app) => {
     });
 
     server.get('/hfswapi/getPlanet/:id', async (req, res) => {
-        res.sendStatus(501);
+        try {
+            const planet = await swService.getPlanet(req.params.id);
+
+            if (!planet) res.status(404).send(`Planet with ID ${req.params.id} not found.`);
+
+            res.status(200).send(planet);
+        } catch (e) {
+            res.status(500).send('Internal server error');
+        }
     });
 
     server.get('/hfswapi/getWeightOnPlanetRandom', async (req, res) => {
