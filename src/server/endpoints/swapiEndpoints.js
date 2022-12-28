@@ -1,7 +1,7 @@
 const applySwapiEndpoints = (server, app) => {
     server.get('/hfswapi/test', async (req, res, next) => {
         try {
-            const { data } = await app.services.swService('/', 'GET', null, true);
+            const { data } = await app.services.swService.callApi('/', 'GET', null, true);
 
             res.status(200).send(data);
         } catch (e) {
