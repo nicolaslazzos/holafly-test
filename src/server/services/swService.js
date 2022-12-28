@@ -24,49 +24,41 @@ class SwService {
   async createPeople(dto) {
     const { id, name, mass, height, homeworld_name, homeworld_id } = dto;
 
-    const people = await this.swPeopleRepository.create({ id, name, mass: parseFloat(mass), height: parseFloat(height), homeworld_name, homeworld_id });
-
-    return new SwPeopleEntity(people);
+    return this.swPeopleRepository.create({ id, name, mass: parseFloat(mass), height: parseFloat(height), homeworld_name, homeworld_id });
   }
 
   async getPeople(id) {
-    let people = await this.swPeopleRepository.findById(id);
+    const people = await this.swPeopleRepository.findById(id);
 
-    if (!people) {
-      const { status, data } = await this.callApi(`/people/${id}`);
+    if (people) return people;
 
-      if (status !== 200) return null;
+    const { status, data } = await this.callApi(`/people/${id}`);
 
-      const planetId = this.app.utils.getIdFromString(data.homeworld);
+    if (status !== 200) return null;
 
-      const planet = await this.getPlanet(planetId);
+    const planetId = this.app.utils.getIdFromString(data.homeworld);
 
-      people = await this.createPeople({ id, ...data, homeworld_id: `/planets/${planetId}`, homeworld_name: planet.name });
-    }
+    const planet = await this.getPlanet(planetId);
 
-    return new SwPeopleEntity(people);
+    return this.createPeople({ id, ...data, homeworld_id: `/planets/${planetId}`, homeworld_name: planet.name });
   }
 
   async createPlanet(dto) {
     const { id, name, gravity } = dto;
 
-    const planet = await this.swPlanetRepository.create({ id, name, gravity: parseFloat(gravity) });
-
-    return new SwPlanetEntity(planet);
+    return this.swPlanetRepository.create({ id, name, gravity: parseFloat(gravity) });
   }
 
   async getPlanet(id) {
-    let planet = await this.swPlanetRepository.findById(id);
+    const planet = await this.swPlanetRepository.findById(id);
 
-    if (!planet) {
-      const { status, data } = await this.callApi(`/planets/${id}`);
+    if (planet) return planet;
 
-      if (status !== 200) return null;
+    const { status, data } = await this.callApi(`/planets/${id}`);
 
-      planet = await this.createPlanet({ id, ...data, gravity: data.gravity.split(' ')[0] });
-    }
+    if (status !== 200) return null;
 
-    return new SwPlanetEntity(planet);
+    return this.createPlanet({ id, ...data, gravity: this.app.utils.getFloatFromString(data.gravity) });
   }
 
   async getWeightOnPlanet(peopleId, planetId) {
@@ -75,7 +67,7 @@ class SwService {
 
     if (this.app.utils.getIdFromString(people.homeworld_id) == planetId) throw new Error();
 
-    return people.mass * planet.gravity;
+    return { mass: people.mass, gravity: planet.gravity, weight: people.mass * planet.gravity };
   }
 }
 

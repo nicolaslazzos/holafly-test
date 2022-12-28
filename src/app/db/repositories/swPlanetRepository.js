@@ -1,14 +1,20 @@
+const SwPlanetEntity = require("../entities/swPlanet");
+
 class SwPlanetRepository {
   constructor(db) {
     this.db = db;
   }
 
   async create(dto) {
-    return this.db.swPlanet.create(dto, { raw: true });
+    const planet = await this.db.swPlanet.create(dto, { raw: true });
+
+    return planet ? new SwPlanetEntity(planet) : null;
   }
 
   async findById(id) {
-    return this.db.swPlanet.findByPk(id, { raw: true });
+    const planet = await this.db.swPlanet.findByPk(id, { raw: true });
+
+    return planet ? new SwPlanetEntity(planet) : null;
   }
 }
 

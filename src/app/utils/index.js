@@ -6,4 +6,8 @@ function getIdFromString(str) {
   return +str.match(/\d+/)[0];
 }
 
-module.exports = { getRandomId, getIdFromString };
+function getFloatFromString(str) {
+  return +str.match(/[+-]?\d+(\.\d+)?/g)[0];
+}
+
+module.exports = { getRandomId, getIdFromString, getFloatFromString };

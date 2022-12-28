@@ -38,9 +38,9 @@ const applySwapiEndpoints = (server, app) => {
             const peopleId = req.query.peopleId ?? app.utils.getRandomId();
             const planetId = req.query.planetId ?? app.utils.getRandomId();
 
-            const weight = await app.services.swService.getWeightOnPlanet(peopleId, planetId);
+            const result = await app.services.swService.getWeightOnPlanet(peopleId, planetId);
 
-            res.status(200).send({ weight });
+            res.status(200).send(result);
         } catch (e) {
             res.status(500).send('Internal server error');
         }

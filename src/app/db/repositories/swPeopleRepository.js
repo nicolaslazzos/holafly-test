@@ -1,14 +1,20 @@
+const SwPeopleEntity = require("../entities/swPeople");
+
 class SwPeopleRepository {
   constructor(db) {
     this.db = db;
   }
 
   async create(dto) {
-    return this.db.swPeople.create(dto, { raw: true });
+    const people = await this.db.swPeople.create(dto, { raw: true });
+
+    return people ? new SwPeopleEntity(people) : null;
   }
 
   async findById(id) {
-    return this.db.swPeople.findByPk(id, { raw: true });
+    const people = await this.db.swPeople.findByPk(id, { raw: true });
+
+    return people ? new SwPeopleEntity(people) : null;
   }
 }
 
