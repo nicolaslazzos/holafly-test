@@ -3,6 +3,8 @@ const SwPlanetRepository = require("../../app/db/repositories/swPlanetRepository
 const SwPeopleEntity = require("../entities/swPeople");
 const SwPlanetEntity = require("../entities/swPlanet");
 
+const { getIdFromString } = require('../utils/functions');
+
 class SwService {
   constructor(app) {
     this.app = app;
@@ -24,7 +26,7 @@ class SwService {
 
       if (status !== 200) return null;
 
-      const planetId = data.homeworld.match(/\d+/)[0];
+      const planetId = getIdFromString(data.homeworld);
 
       const planet = await this.getPlanet(planetId);
 
@@ -52,6 +54,15 @@ class SwService {
     }
 
     return new SwPlanetEntity(planet);
+  }
+
+  async getWeightOnPlanet(peopleId, planetId) {
+    const people = await this.getPeople(peopleId);
+    const planet = await this.getPlanet(planetId);
+
+    if (getIdFromString(people.homeworld_id) == planetId) throw new Error();
+
+    return this.app.swapiFunctions.getWeightOnPlanet(people.mass, planet.gravity);
   }
 }
 

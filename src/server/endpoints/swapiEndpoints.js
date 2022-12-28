@@ -1,4 +1,5 @@
 const SwService = require("../services/swService");
+const { getRandomId } = require('../utils/functions');
 
 const applySwapiEndpoints = (server, app) => {
     const swService = new SwService(app);
@@ -33,7 +34,16 @@ const applySwapiEndpoints = (server, app) => {
     });
 
     server.get('/hfswapi/getWeightOnPlanetRandom', async (req, res) => {
-        res.sendStatus(501);
+        try {
+            const peopleId = req.query.peopleId ?? getRandomId();
+            const planetId = req.query.planetId ?? getRandomId();
+
+            const weight = await swService.getWeightOnPlanet(peopleId, planetId);
+
+            res.status(200).send({ weight });
+        } catch (e) {
+            res.status(500).send('Internal server error');
+        }
     });
 
     server.get('/hfswapi/getLogs', async (req, res) => {
