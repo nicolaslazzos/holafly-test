@@ -5,8 +5,9 @@ const applyServices = require('./services');
 
 const createExpressServer = async app => {
 	const server = express();
-	applyMiddlewares(server, app);
+
 	applyEndpoints(server, app);
+	applyMiddlewares(server, app); // apply last, because of the error handler
 	applyServices(app);
 
 	await app.db.initDB();

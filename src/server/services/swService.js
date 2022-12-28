@@ -1,7 +1,7 @@
 const SwPeopleRepository = require("../../app/db/repositories/swPeopleRepository");
 const SwPlanetRepository = require("../../app/db/repositories/swPlanetRepository");
-const SwPeopleEntity = require("../../app/db/entities/swPeople");
-const SwPlanetEntity = require("../../app/db/entities/swPlanet");
+
+const { NotFoundException, BadRequestException } = require("../errors");
 
 class SwService {
   constructor(app) {
@@ -34,7 +34,7 @@ class SwService {
 
     const { status, data } = await this.callApi(`/people/${id}`);
 
-    if (status !== 200) return null;
+    if (status !== 200) throw new NotFoundException(`People with ID ${id} not found`);
 
     const planetId = this.app.utils.getIdFromString(data.homeworld);
 
@@ -56,7 +56,7 @@ class SwService {
 
     const { status, data } = await this.callApi(`/planets/${id}`);
 
-    if (status !== 200) return null;
+    if (status !== 200) throw new NotFoundException(`People with ID ${id} not found`);
 
     return this.createPlanet({ id, ...data, gravity: this.app.utils.getFloatFromString(data.gravity) });
   }
@@ -65,7 +65,7 @@ class SwService {
     const people = await this.getPeople(peopleId);
     const planet = await this.getPlanet(planetId);
 
-    if (this.app.utils.getIdFromString(people.homeworld_id) == planetId) throw new Error();
+    if (this.app.utils.getIdFromString(people.homeworld_id) == planetId) throw new BadRequestException(`Cannot calculate weight for people in it's own planet`);
 
     return { mass: people.mass, gravity: planet.gravity, weight: people.mass * planet.gravity };
   }

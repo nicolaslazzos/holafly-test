@@ -1,5 +1,4 @@
 const LoggingRepository = require("../../app/db/repositories/loggingRepository");
-const LoggingEntity = require("../../app/db/entities/logging");
 
 class LoggingService {
   constructor(app) {

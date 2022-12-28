@@ -1,8 +1,9 @@
 const loggingMiddleware = require('./loggingMiddleware');
+const exceptionsMiddleware = require('./exceptionsMiddleware');
 
 const applyMiddlwares = (server, app) => {
     server.use(loggingMiddleware(app));
-	return server;
+    server.use(exceptionsMiddleware);
 };
 
 module.exports = applyMiddlwares;
