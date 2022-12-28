@@ -1,6 +1,6 @@
 class LoggingEntity {
-  constructor({ ip, header, action }) {
-    Object.assign(this, { ip, header, action });
+  constructor({ id, ip, header, action }) {
+    Object.assign(this, { id, ip, header, action });
   }
 }
 

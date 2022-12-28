@@ -1,6 +1,6 @@
 class SwPlanetEntity {
-  constructor({ name, gravity }) {
-    Object.assign(this, { name, gravity });
+  constructor({ id, name, gravity }) {
+    Object.assign(this, { id, name, gravity });
   }
 }
 

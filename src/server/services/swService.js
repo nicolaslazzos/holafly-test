@@ -15,7 +15,9 @@ class SwService {
   async createPeople(dto) {
     const { id, name, mass, height, homeworld_name, homeworld_id } = dto;
 
-    return this.swPeopleRepository.create({ id, name, mass: parseFloat(mass), height: parseFloat(height), homeworld_name, homeworld_id });
+    const people = await this.swPeopleRepository.create({ id, name, mass: parseFloat(mass), height: parseFloat(height), homeworld_name, homeworld_id });
+
+    return new SwPeopleEntity(people);
   }
 
   async getPeople(id) {
@@ -39,7 +41,9 @@ class SwService {
   async createPlanet(dto) {
     const { id, name, gravity } = dto;
 
-    return this.swPlanetRepository.create({ id, name, gravity: parseFloat(gravity) });
+    const planet = await this.swPlanetRepository.create({ id, name, gravity: parseFloat(gravity) });
+
+    return new SwPlanetEntity(planet);
   }
 
   async getPlanet(id) {

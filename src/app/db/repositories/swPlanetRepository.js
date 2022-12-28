@@ -4,13 +4,11 @@ class SwPlanetRepository {
   }
 
   async create(dto) {
-    const planet = await this.db.swPlanet.create(dto);
-    return planet ? planet.toJSON() : null;
+    return this.db.swPlanet.create(dto, { raw: true });
   }
 
   async findById(id) {
-    const planet = await this.db.swPlanet.findByPk(id);
-    return planet ? planet.toJSON() : null;
+    return this.db.swPlanet.findByPk(id, { raw: true });
   }
 }
 
